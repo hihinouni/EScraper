@@ -4,6 +4,7 @@ let isRunning = false;
 
 // DOM elements
 const urlInput = document.getElementById('url-input');
+const maxPagesInput = document.getElementById('max-pages-input');
 const startBtn = document.getElementById('start-btn');
 const stopBtn = document.getElementById('stop-btn');
 const clearBtn = document.getElementById('clear-btn');
@@ -19,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Start scraping
 startBtn.addEventListener('click', async () => {
     const url = urlInput.value.trim();
+    const maxPages = maxPagesInput.value.trim();
     
     if (!url) {
         addTerminalLine('error', 'Please enter a URL');
@@ -34,12 +36,18 @@ startBtn.addEventListener('click', async () => {
     }
     
     try {
+        const requestBody = { url: url };
+        if (maxPages) {
+            requestBody.max_pages = parseInt(maxPages);
+            addTerminalLine('info', `Limiting to ${maxPages} pages`);
+        }
+        
         const response = await fetch('/api/start', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ url: url })
+            body: JSON.stringify(requestBody)
         });
         
         const data = await response.json();
@@ -177,6 +185,7 @@ function updateUI(running) {
     startBtn.disabled = running;
     stopBtn.disabled = !running;
     urlInput.disabled = running;
+    maxPagesInput.disabled = running;
     
     if (running) {
         statusText.textContent = '● Running';

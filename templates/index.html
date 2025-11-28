@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sitemap Scraper - Web Interface</title>
+    <title>Website Scraper - Offline Website Creator</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🗺️ Sitemap Scraper</h1>
-            <p class="subtitle">Discover and download sitemaps from any website</p>
+            <h1>🌐 Website Scraper</h1>
+            <p class="subtitle">Download entire websites for offline viewing with a single index page</p>
         </header>
 
         <div class="control-panel">
@@ -22,7 +22,18 @@
                     placeholder="https://example.com or https://example.com/page"
                     value="https://quran.com"
                 >
-                <small>Enter any URL from the website. The scraper will extract the base URL automatically.</small>
+                <small>Enter any URL from the website. The scraper will download all pages and create an offline index.</small>
+            </div>
+            
+            <div class="url-input-section" style="margin-top: 15px;">
+                <label for="max-pages-input">Max Pages (optional):</label>
+                <input 
+                    type="number" 
+                    id="max-pages-input" 
+                    placeholder="Leave empty for all pages"
+                    min="1"
+                >
+                <small>Limit the number of pages to download (useful for testing)</small>
             </div>
 
             <div class="button-group">
@@ -57,7 +68,11 @@
             <div id="terminal" class="terminal">
                 <div class="terminal-line welcome">
                     <span class="prompt">$</span>
-                    <span class="text">Welcome to Sitemap Scraper</span>
+                    <span class="text">Welcome to Website Scraper</span>
+                </div>
+                <div class="terminal-line welcome">
+                    <span class="prompt">$</span>
+                    <span class="text">This tool will download entire websites and create an offline index page</span>
                 </div>
                 <div class="terminal-line welcome">
                     <span class="prompt">$</span>

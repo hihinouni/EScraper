@@ -1,5 +1,5 @@
 """
-Flask backend server for Sitemap Scraper Web Interface
+Flask backend server for Website Scraper Web Interface
 """
 
 from flask import Flask, render_template, request, jsonify, Response, stream_with_context
@@ -8,7 +8,7 @@ import threading
 import queue
 import sys
 from io import StringIO
-from sitemap_scraper import QuranSitemapScraper
+from website_scraper import WebsiteScraper
 from urllib.parse import urlparse
 import time
 
@@ -45,7 +45,7 @@ def extract_base_url(url):
     return f"{parsed.scheme}://{parsed.netloc}"
 
 
-def run_scraper(base_url):
+def run_scraper(base_url, max_pages=None):
     """Run the scraper in a separate thread"""
     global scraper_instance, is_running, should_stop
     
@@ -58,15 +58,14 @@ def run_scraper(base_url):
         sys.stdout = stream
         
         # Create scraper instance with stop callback
-        scraper_instance = QuranSitemapScraper(base_url, stop_callback=lambda: should_stop)
+        scraper_instance = WebsiteScraper(base_url, stop_callback=lambda: should_stop, max_pages=max_pages)
         
-        # Discover and download sitemaps
-        scraper_instance.download_all_sitemaps()
+        # Scrape the entire website
+        scraper_instance.scrape_website()
         
-        # Generate report if not stopped
         if not should_stop:
-            scraper_instance.generate_report()
-            output_queue.put("\n✓ Scraping completed successfully!\n")
+            output_queue.put("\n✓ Website scraping completed successfully!\n")
+            output_queue.put(f"✓ Index page created at: offline_website/index.html\n")
         else:
             output_queue.put("\n⚠ Scraping stopped by user\n")
             
@@ -96,6 +95,7 @@ def start_scraper():
     
     data = request.json
     url = data.get('url', '').strip()
+    max_pages = data.get('max_pages', None)  # Optional limit
     
     if not url:
         return jsonify({'status': 'error', 'message': 'URL is required'}), 400
@@ -106,6 +106,13 @@ def start_scraper():
     except Exception as e:
         return jsonify({'status': 'error', 'message': f'Invalid URL: {str(e)}'}), 400
     
+    # Convert max_pages to int if provided
+    if max_pages:
+        try:
+            max_pages = int(max_pages)
+        except:
+            max_pages = None
+    
     # Clear the queue
     while not output_queue.empty():
         try:
@@ -114,10 +121,10 @@ def start_scraper():
             pass
     
     should_stop = False
-    scraper_thread = threading.Thread(target=run_scraper, args=(base_url,), daemon=True)
+    scraper_thread = threading.Thread(target=run_scraper, args=(base_url, max_pages), daemon=True)
     scraper_thread.start()
     
-    return jsonify({'status': 'success', 'message': 'Scraper started'})
+    return jsonify({'status': 'success', 'message': 'Website scraper started'})
 
 
 @app.route('/api/stop', methods=['POST'])
@@ -172,5 +179,6 @@ def stream():
 if __name__ == '__main__':
     print("Starting Flask server...")
     print("Open http://localhost:5000 in your browser")
+    print("This will scrape entire websites and create an offline index page")
     app.run(debug=True, threaded=True, port=5000)
 

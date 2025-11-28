@@ -1,28 +1,27 @@
-# Sitemap Scraper - Web Interface
+# Website Scraper - Offline Website Creator
 
-A Python scraper with a beautiful web interface that discovers and downloads all sitemaps from any website.
+A Python scraper with a beautiful web interface that downloads entire websites for offline viewing. Creates a single index page linking to all downloaded pages.
 
-## What Was Found
+## What It Does
 
-The scraper successfully discovered and downloaded **all sitemaps** from quran.com:
+This scraper downloads **entire websites** for offline viewing:
 
-- **Main Sitemap Index**: `sitemap.xml` (contains references to 9 nested sitemaps)
-- **9 Nested Sitemaps**: `sitemap-0.xml` through `sitemap-8.xml`
-- **Total URLs**: 166,271 URLs across all sitemaps
+1. **Discovers URLs** from sitemaps (robots.txt, common locations)
+2. **Downloads all web pages** from the discovered URLs
+3. **Saves HTML files** locally with proper directory structure
+4. **Creates a single index page** (`index.html`) that links to all downloaded pages
+5. **Fixes internal links** to work offline
 
-### Sitemap Structure
+### Output Structure
 
 ```
-sitemap.xml (index)
-├── sitemap-0.xml (20,000 URLs)
-├── sitemap-1.xml (20,000 URLs)
-├── sitemap-2.xml (20,000 URLs)
-├── sitemap-3.xml (20,000 URLs)
-├── sitemap-4.xml (20,000 URLs)
-├── sitemap-5.xml (20,000 URLs)
-├── sitemap-6.xml (20,000 URLs)
-├── sitemap-7.xml (20,000 URLs)
-└── sitemap-8.xml (6,271 URLs)
+offline_website/
+├── index.html          # Main index page with all links
+├── pages/              # All downloaded HTML pages
+│   ├── page1.html
+│   ├── page2.html
+│   └── ...
+└── scrape_report.json  # Detailed report of the scraping process
 ```
 
 ## Installation
@@ -46,33 +45,35 @@ http://localhost:5000
 ```
 
 3. Enter any URL from the website you want to scrape (e.g., `https://quran.com` or `https://quran.com/al-baqarah`)
-4. Click "Start Scraping" to begin
-5. Watch the real-time terminal output
-6. Click "Stop Scraping" to stop at any time
+4. (Optional) Set a maximum number of pages to download (useful for testing)
+5. Click "Start Scraping" to begin
+6. Watch the real-time terminal output as pages are downloaded
+7. Click "Stop Scraping" to stop at any time
+8. Once complete, open `offline_website/index.html` in your browser to view the offline website
 
 ### Command Line Interface
 
 You can also run the scraper directly from the command line:
 
-```bash
-python sitemap_scraper.py
-```
+```python
+from website_scraper import WebsiteScraper
 
-The scraper will:
-1. Check `robots.txt` for sitemap references
-2. Check common sitemap locations (`/sitemap.xml`, `/sitemap_index.xml`, etc.)
-3. Check for HTML sitemap pages
-4. Download all discovered sitemaps recursively
-5. Save all sitemaps to the `sitemaps/` directory
-6. Generate a detailed report in `sitemap_report.json`
+scraper = WebsiteScraper("https://example.com", max_pages=100)
+scraper.scrape_website()
+```
 
 ## Output
 
-- **Sitemaps**: All XML sitemap files are saved in the `sitemaps/` directory
-- **Report**: A JSON report (`sitemap_report.json`) containing:
-  - Total number of sitemaps
-  - Type of each sitemap (index vs urlset)
-  - List of all URLs found
+- **Offline Website**: All downloaded pages are saved in the `offline_website/pages/` directory
+- **Index Page**: A beautiful index page at `offline_website/index.html` with:
+  - Search functionality
+  - Statistics (total pages, failed downloads)
+  - Links to all downloaded pages
+  - Organized by page title
+- **Report**: A JSON report (`offline_website/scrape_report.json`) containing:
+  - All downloaded URLs
+  - Page titles and file paths
+  - Failed URLs
   - Statistics summary
 
 ## Features
@@ -86,17 +87,22 @@ The scraper will:
 - 📱 Responsive design for mobile devices
 
 ### Scraper
-- ✅ Automatically discovers sitemaps from multiple sources
-- ✅ Handles sitemap index files recursively
-- ✅ Respects rate limits (1 second delay between requests)
-- ✅ Saves all sitemaps locally
-- ✅ Generates comprehensive reports
-- ✅ Error handling and logging
+- ✅ Automatically discovers URLs from sitemaps
+- ✅ Downloads actual web pages (not just sitemaps)
+- ✅ Creates offline website with working internal links
+- ✅ Generates beautiful index page with search
+- ✅ Respects rate limits (0.5 second delay between requests)
+- ✅ Handles errors gracefully
 - ✅ Stop functionality for graceful termination
+- ✅ Optional page limit for testing
+- ✅ Fixes relative links to work offline
 
 ## Notes
 
-- The scraper includes a 1-second delay between requests to be respectful to the server
-- All sitemaps are saved as XML files for easy parsing
-- The report file can be very large (166K+ URLs) but is useful for analysis
+- The scraper includes a 0.5-second delay between requests to be respectful to the server
+- All pages are saved as HTML files in the `offline_website/pages/` directory
+- Internal links are automatically fixed to work offline
+- External links open in new tabs
+- The index page includes search functionality to quickly find pages
+- Use the "Max Pages" option to limit downloads for testing purposes
 
