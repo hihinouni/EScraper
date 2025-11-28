@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sitemap Scraper - Web Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🗺️ Sitemap Scraper</h1>
+            <p class="subtitle">Discover and download sitemaps from any website</p>
+        </header>
+
+        <div class="control-panel">
+            <div class="url-input-section">
+                <label for="url-input">Website URL:</label>
+                <input 
+                    type="text" 
+                    id="url-input" 
+                    placeholder="https://example.com or https://example.com/page"
+                    value="https://quran.com"
+                >
+                <small>Enter any URL from the website. The scraper will extract the base URL automatically.</small>
+            </div>
+
+            <div class="button-group">
+                <button id="start-btn" class="btn btn-start">
+                    <span class="btn-icon">▶</span>
+                    Start Scraping
+                </button>
+                <button id="stop-btn" class="btn btn-stop" disabled>
+                    <span class="btn-icon">⏹</span>
+                    Stop Scraping
+                </button>
+                <button id="clear-btn" class="btn btn-clear">
+                    <span class="btn-icon">🗑</span>
+                    Clear Terminal
+                </button>
+            </div>
+
+            <div class="status-indicator">
+                <span id="status-text" class="status stopped">● Stopped</span>
+            </div>
+        </div>
+
+        <div class="terminal-container">
+            <div class="terminal-header">
+                <span class="terminal-title">Terminal Output</span>
+                <div class="terminal-controls">
+                    <span class="terminal-dot red"></span>
+                    <span class="terminal-dot yellow"></span>
+                    <span class="terminal-dot green"></span>
+                </div>
+            </div>
+            <div id="terminal" class="terminal">
+                <div class="terminal-line welcome">
+                    <span class="prompt">$</span>
+                    <span class="text">Welcome to Sitemap Scraper</span>
+                </div>
+                <div class="terminal-line welcome">
+                    <span class="prompt">$</span>
+                    <span class="text">Enter a URL and click "Start Scraping" to begin</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
+
